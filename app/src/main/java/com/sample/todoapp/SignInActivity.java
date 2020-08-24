@@ -2,8 +2,11 @@ package com.sample.todoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.sample.todoapp.models.User;
+import com.sample.todoapp.services.ApiService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignInActivity extends AppCompatActivity {
 
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
     EditText mTextUsername;
     EditText mTextPassword;
     Button mButtonLogin;
@@ -32,6 +38,7 @@ public class SignInActivity extends AppCompatActivity {
 
 //    Gson gson= new Gson();
     JsonPlaceHolderApi jsonPlaceHolderApi;
+    ApiService apiService;
 
 
     @Override
@@ -40,43 +47,20 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
 
-        mTextUsername = findViewById(R.id.username)
+        mTextUsername = findViewById(R.id.username);
         mTextPassword = findViewById(R.id.password);
         mButtonLogin = findViewById(R.id.login);
         mButtonRegister = findViewById(R.id.registerid);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.3.2:8000/api/v1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
-        Call<List<User>> call = jsonPlaceHolderApi.getUsers();
-
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-
-                if(!response.isSuccessful()){
-                    Toast.makeText(getBaseContext(),"Error: " + response.code(),Toast.LENGTH_SHORT).show();
-                }
-
-                users = response.body();
-
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                Toast.makeText(getBaseContext(),"Can't connect to server",Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent serviceIntent = new Intent(getBaseContext(), ApiService.class);
+                serviceIntent.putExtra(USERNAME, mTextUsername.getText().toString());
+                serviceIntent.putExtra(PASSWORD, mTextPassword.getText().toString());
+                serviceIntent.putExtra(ApiService.TASK_STRING, "login");
+                startService(serviceIntent);
             }
         });
 
@@ -88,6 +72,23 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+        ServiceConnection sc = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                ApiService.mBinder binder = (ApiService.mBinder) iBinder;
+                apiService = binder.getApiService();
+                if(apiService.isLoginVerification()){
+                    Toast.makeText(getBaseContext(), "VERIFIED", Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(getBaseContext(), "NOT VERIFIED", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+
+            }
+        };
 
     }
 }

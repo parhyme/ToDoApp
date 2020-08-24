@@ -18,6 +18,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"></activity>
+        <service
+            android:name=".services.ApiService"
+            android:enabled="true"/>
     </application>
 
 </manifest>
