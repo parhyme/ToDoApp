@@ -3,6 +3,7 @@ package com.sample.todoapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class SignInActivity extends AppCompatActivity {
 //    Gson gson= new Gson();
     JsonPlaceHolderApi jsonPlaceHolderApi;
     ApiService apiService;
+    Context context;
 
 
     @Override
@@ -47,30 +49,11 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
 
+        context = this;
         mTextUsername = findViewById(R.id.username);
         mTextPassword = findViewById(R.id.password);
         mButtonLogin = findViewById(R.id.login);
         mButtonRegister = findViewById(R.id.registerid);
-
-
-        mButtonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent serviceIntent = new Intent(getBaseContext(), ApiService.class);
-                serviceIntent.putExtra(USERNAME, mTextUsername.getText().toString());
-                serviceIntent.putExtra(PASSWORD, mTextPassword.getText().toString());
-                serviceIntent.putExtra(ApiService.TASK_STRING, "login");
-                startService(serviceIntent);
-            }
-        });
-
-        mButtonRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent regIntent = new Intent(SignInActivity.this,RegisterActivity.class);
-                startActivity(regIntent);
-            }
-        });
 
         ServiceConnection sc = new ServiceConnection() {
             @Override
@@ -89,6 +72,30 @@ public class SignInActivity extends AppCompatActivity {
 
             }
         };
+
+
+
+        mButtonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent serviceIntent = new Intent(getBaseContext(), ApiService.class);
+                serviceIntent.putExtra(USERNAME, mTextUsername.getText().toString());
+                serviceIntent.putExtra(PASSWORD, mTextPassword.getText().toString());
+//                serviceIntent.putExtra(ApiService.CONTEXT,context.);
+                serviceIntent.putExtra(ApiService.TASK_STRING, "login");
+                startService(serviceIntent);
+            }
+        });
+
+        mButtonRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent regIntent = new Intent(SignInActivity.this,RegisterActivity.class);
+                startActivity(regIntent);
+            }
+        });
+
+
 
     }
 }

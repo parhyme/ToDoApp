@@ -19,14 +19,17 @@ import retrofit2.http.Query;
  */
 public interface JsonPlaceHolderApi {
 
-    @GET("users/{id}")
+    @GET("users/{id}/")
     Call<User> getUser(@Path("id") int userId);
 
-    @GET("users")
-    Call<User> getUser(@Query("username") String username, @Query("password") String password);
+    @GET("users/{username}&{password}/")
+    Call<User> getUser(@Path("username") String username, @Path("password") String password);
 
     @GET("users/{id}/todos")
     Call<List<Todo>> getTodos(@Path("id") int userId);
+
+    @GET("users/")
+    Call<List<User>> getUsers();
 
     @POST("users/")
     Call<User> creatUser(@Body User user);

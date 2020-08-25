@@ -3,12 +3,17 @@ package com.sample.todoapp.models;
 public class User {
     private String username;
     private String password;
-    private int userid;
+    private int id;
 
     public User(String username, String password, int userid) {
         this.username = username;
         this.password = password;
-        this.userid = userid;
+        this.id = userid;
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -28,10 +33,10 @@ public class User {
     }
 
     public int getUserid() {
-        return userid;
+        return id;
     }
 
     public void setUserid(int userid) {
-        this.userid = userid;
+        this.id = userid;
     }
 }

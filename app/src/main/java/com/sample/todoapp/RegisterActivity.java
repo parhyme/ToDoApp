@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.sample.todoapp.services.ApiService;
 
@@ -47,10 +48,13 @@ public class RegisterActivity extends AppCompatActivity {
                     Intent serviceIntent = new Intent(getBaseContext(), ApiService.class);
                     serviceIntent.putExtra(USERNAME, mTextUsername.getText().toString());
                     serviceIntent.putExtra(PASSWORD, mTextPassword.getText().toString());
+                    serviceIntent.putExtra(ApiService.TASK_STRING, "register");
 
                     startService(serviceIntent);
                 }
             });
+        }else{
+            Toast.makeText(getBaseContext(), "ENTER THE SAME PASSWORD", Toast.LENGTH_LONG).show();
         }
 
 
